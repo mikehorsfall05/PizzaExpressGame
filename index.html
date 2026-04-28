@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pizza Express Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🍕 Pizza Express</h1>
+      <div id="stats">
+        <span id="score-display">Score: <strong id="score">0</strong></span>
+        <span id="money-display">💰 <strong id="money">$50</strong></span>
+        <span id="day-display">Day: <strong id="day">1</strong></span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Order Queue -->
+      <section id="orders-section">
+        <h2>📋 Customer Orders</h2>
+        <div id="orders-container">
+          <p class="empty-msg">No orders yet. Open the restaurant!</p>
+        </div>
+      </section>
+
+      <!-- Pizza Builder -->
+      <section id="builder-section">
+        <h2>🍕 Build Your Pizza</h2>
+        <div id="pizza-builder">
+          <div class="builder-step">
+            <label>Base:</label>
+            <select id="select-base">
+              <option value="">-- choose --</option>
+              <option value="thin">Thin Crust</option>
+              <option value="thick">Thick Crust</option>
+              <option value="stuffed">Stuffed Crust (+$1)</option>
+            </select>
+          </div>
+          <div class="builder-step">
+            <label>Sauce:</label>
+            <select id="select-sauce">
+              <option value="">-- choose --</option>
+              <option value="tomato">Tomato</option>
+              <option value="bbq">BBQ</option>
+              <option value="white">White Garlic</option>
+            </select>
+          </div>
+          <div class="builder-step">
+            <label>Toppings:</label>
+            <div id="toppings-list">
+              <label><input type="checkbox" value="cheese" /> Cheese</label>
+              <label><input type="checkbox" value="pepperoni" /> Pepperoni</label>
+              <label><input type="checkbox" value="mushrooms" /> Mushrooms</label>
+              <label><input type="checkbox" value="peppers" /> Peppers</label>
+              <label><input type="checkbox" value="olives" /> Olives</label>
+              <label><input type="checkbox" value="chicken" /> Chicken (+$1)</label>
+            </div>
+          </div>
+          <button id="serve-btn" class="btn-primary" disabled>Serve Pizza 🍕</button>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section id="controls-section">
+        <button id="open-btn" class="btn-success">Open Restaurant 🔓</button>
+        <button id="next-day-btn" class="btn-secondary" disabled>Next Day ⏩</button>
+      </section>
+
+      <!-- Message Log -->
+      <section id="log-section">
+        <h2>📝 Activity Log</h2>
+        <ul id="log-list"></ul>
+      </section>
+    </main>
+
+    <!-- Game Over / Win Screen -->
+    <div id="overlay" class="hidden">
+      <div id="overlay-content">
+        <h2 id="overlay-title"></h2>
+        <p id="overlay-msg"></p>
+        <button id="restart-btn" class="btn-primary">Play Again 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
