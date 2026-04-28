@@ -11,20 +11,22 @@
         body {
             margin: 0;
             padding: 0;
-            display: grid;
-            place-items: center;
+            display: block;
             min-height: 100vh;
             background-color: #f0f0f0;
             font-family: 'Space Grotesk', Arial, sans-serif;
             overflow: hidden;
         }
         #p5-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+            position: fixed;
+            inset: 0;
             overflow: hidden;
         }
         #p5-container canvas {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             display: block;
             touch-action: none;
         }

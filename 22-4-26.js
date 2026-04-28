@@ -144,7 +144,8 @@ function preload(){
 }
 
 function setup(){
-  createCanvas(1000,700)
+  let canvas=createCanvas(1000,700)
+  canvas.parent("p5-container")
   textFont(gameFont)
   sliceLayer=createGraphics(width,height)
   initCheeseParticleSprite()
