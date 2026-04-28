@@ -6,8 +6,9 @@ Your p5.js pizza game is now set up to run outside of the p5.js web editor!
 ```
 projectTest/
 ├── index.html          # Main HTML file
-├── sketch.js           # Your game code
-├── assets/             # Game images
+├── 22-4-26.js          # Current game code
+├── PNG Pizza Express Photos/  # Game art and sound/image assets used by the current build
+├── Sauce Tomato Font/         # Font files used by the current build
 ├── run.bat             # Batch file to start local server
 └── README.md           # This file
 ```
@@ -50,8 +51,9 @@ projectTest/
 
 **Can't find the game?**
 - Check that all files are in the correct locations:
-  - `sketch.js` in the root project folder
-  - `assets/` folder with all PNG images
+  - `22-4-26.js` in the root project folder
+  - `PNG Pizza Express Photos/` folder with the current game images
+  - `Sauce Tomato Font/` folder with the font files
   - `index.html` in the root project folder
 
 Enjoy your game!
