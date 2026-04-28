@@ -1,0 +1,366 @@
+let stage="dough";
+
+let doughImg,sauceImg;
+let toppingImgs={}
+let uncookedImgs={}
+let cookedImgs={}
+
+let pizzaX,pizzaY
+
+let baseSize=240
+let pulse=0
+let pulseSpeed=0.05
+let maxSize=baseSize+60
+
+let doughStopped=false
+
+let sauceBtn,cheeseBtn,bakeBtn,finishBtn,replayBtn
+
+let fadeStart,bakeStart,cheeseStart
+
+let toppings=[]
+let tray=[]
+let dragged=null
+
+let slicesNeeded
+let sliceStart=null
+let slices=[]
+
+let cheeseParticles=[]
+let steam=[]
+let confetti=[]
+
+let stars=0
+
+const RECIPES=[
+  {id:1,pepperoni:8},
+  {id:2,chicken:5,onion:3,mushroom:4},
+  {id:3,mushroom:6,olive:4,pepper:4},
+  {id:4,pepperoni:6,chicken:4,olive:4,onion:4},
+  {id:5,chicken:4,onion:3,pepper:3}
+]
+
+let recipe
+
+function preload(){
+  doughImg=loadImage("assets/dough.png")
+  sauceImg=loadImage("assets/saucedBase.png")
+  
+  toppingImgs.pepperoni=loadImage("assets/pepperoni.png")
+  toppingImgs.chicken=loadImage("assets/chicken.png")
+  toppingImgs.onion=loadImage("assets/onion.png")
+  toppingImgs.mushroom=loadImage("assets/mushroom.png")
+  toppingImgs.olive=loadImage("assets/olive.png")
+  toppingImgs.pepper=loadImage("assets/pepper.png")
+  
+  for(let i=1;i<=5;i++){
+    uncookedImgs[i]=loadImage("assets/UncookedRecipe"+i+".png")
+    cookedImgs[i]=loadImage("assets/CookedRecipe"+i+".png")
+  }
+}
+
+function setup(){
+  createCanvas(1000,700)
+  pizzaX=width/2
+  pizzaY=height/2+40
+
+  recipe=random(RECIPES)
+  slicesNeeded=random([4,6,8])
+
+  sauceBtn=new Button(width-150,height/2,"Sauce","red")
+  cheeseBtn=new Button(width-150,height/2,"Cheese")
+  bakeBtn=new Button(width-150,height-80,"Bake")
+  finishBtn=new Button(width-90,height-80,"✔")
+  replayBtn=new Button(width/2-70,height/2+140,"Replay")
+  
+  createTray()
+}
+
+function draw(){
+  background(245)
+  if(stage=="dough") drawDough()
+  if(stage=="sauceFade") drawSauceFade()
+  if(stage=="toppings") drawToppings()
+  if(stage=="cheeseAnim") drawCheese()
+  if(stage=="readyBake") drawReadyBake()
+  if(stage=="baking") drawBake()
+  if(stage=="slice") drawSlice()
+  if(stage=="end") drawEnd()
+}
+
+function drawDough(){
+  textAlign(CENTER)
+  textSize(24)
+  fill(0)
+  text("Press when the dough is at its biggest",width/2,60)
+  
+  if(!doughStopped) pulse+=pulseSpeed
+  let size=baseSize+sin(pulse)*60
+  
+  imageMode(CENTER)
+  image(doughImg,pizzaX,pizzaY,size,size)
+  
+  if(doughStopped){
+    sauceBtn.show()
+  }
+}
+
+function drawSauceFade(){
+  let t=millis()-fadeStart
+  let fade=map(t,0,2000,0,255)
+  
+  image(doughImg,pizzaX,pizzaY,maxSize,maxSize)
+  tint(255,fade)
+  image(sauceImg,pizzaX,pizzaY,maxSize,maxSize)
+  noTint()
+  
+  if(t>2000) stage="toppings"
+}
+
+function drawToppings(){
+  image(sauceImg,pizzaX,pizzaY,maxSize,maxSize)
+  textAlign(CENTER)
+  textSize(18)
+  text(recipeText(),width/2,40)
+  drawTray()
+  
+  for(let t of toppings){
+    t.update()
+    t.show()
+  }
+  
+  cheeseBtn.show()
+}
+
+function drawCheese(){
+  let progress=millis()-cheeseStart
+  let fade=map(progress,0,3000,0,255)
+  
+  image(sauceImg,pizzaX,pizzaY,maxSize,maxSize)
+  tint(255,fade)
+  image(uncookedImgs[recipe.id],pizzaX,pizzaY,maxSize,maxSize)
+  noTint()
+  
+  for(let t of toppings){
+    t.showFade(255-fade)
+  }
+  
+  for(let p of cheeseParticles){
+    p.update()
+    p.show()
+  }
+  
+  if(progress>3000) stage="readyBake"
+}
+
+function drawReadyBake(){
+  image(uncookedImgs[recipe.id],pizzaX,pizzaY,maxSize,maxSize)
+  bakeBtn.show()
+}
+
+function drawBake(){
+  let t=millis()-bakeStart
+  let fade=map(t,0,5000,0,255)
+  
+  tint(255,255-fade)
+  image(uncookedImgs[recipe.id],pizzaX,pizzaY,maxSize,maxSize)
+  
+  tint(255,fade)
+  image(cookedImgs[recipe.id],pizzaX,pizzaY,maxSize,maxSize)
+  noTint()
+  
+  if(t>5000){
+    for(let i=0;i<20;i++) steam.push(new Steam())
+    stage="slice"
+  }
+}
+
+function drawSlice(){
+  image(cookedImgs[recipe.id],pizzaX,pizzaY,maxSize,maxSize)
+  
+  for(let s of steam){
+    s.update()
+    s.show()
+  }
+  
+  stroke(0)
+  strokeWeight(3)
+  for(let a of slices){
+    let x=pizzaX+cos(a)*140
+    let y=pizzaY+sin(a)*140
+    line(pizzaX,pizzaY,x,y)
+  }
+  
+  textAlign(CENTER)
+  textSize(20)
+  fill(0)
+  text("Drag to slice pizza into "+slicesNeeded+" pieces",width/2,60)
+  
+  finishBtn.show()
+}
+
+function drawEnd(){
+  background(240)
+  textAlign(CENTER)
+  textSize(34)
+  text("Fantastic Pizza!",width/2,150)
+  textSize(20)
+  text("Amazing job chef! That pizza looks perfect.",width/2,190)
+  drawStars(width/2-90,260,stars)
+  for(let c of confetti){
+    c.update()
+    c.show()
+  }
+  replayBtn.show()
+}
+
+function mousePressed(){
+  // Dough click stops dough
+  if(stage=="dough"){
+    let size=baseSize+sin(pulse)*60
+    if(abs(size-maxSize)<8){
+      doughStopped=true
+    }else{
+      pulseSpeed*=1.25
+    }
+  }
+  // Sauce button after dough stop
+  if(stage=="dough" && doughStopped && sauceBtn.hover()){
+    fadeStart=millis()
+    stage="sauceFade"
+  }
+  
+  // Toppings drag from tray
+  if(stage=="toppings"){
+    for(let t of tray){
+      if(t.hover()){
+        let n=new Topping(t.type,mouseX,mouseY)
+        toppings.push(n)
+        dragged=n
+        n.dragging=true
+      }
+    }
+    if(cheeseBtn.hover()) startCheese()
+  }
+  
+  if(stage=="readyBake" && bakeBtn.hover()){
+    bakeStart=millis()
+    stage="baking"
+  }
+  
+  // Slice start
+  if(stage=="slice"){
+    sliceStart=createVector(mouseX,mouseY)
+  }
+  
+  if(stage=="end" && replayBtn.hover()){
+    location.reload()
+  }
+}
+
+function mouseDragged(){
+  if(stage=="slice" && sliceStart){
+    // continuously update slice preview while dragging
+    let angle=atan2(mouseY-pizzaY,mouseX-pizzaX)
+    let step=TWO_PI/slicesNeeded
+    let snapped=round(angle/step)*step
+    if(!slices.includes(snapped)) slices.push(snapped)
+  }
+  
+  if(dragged) dragged.dragging=true
+}
+
+function mouseReleased(){
+  if(dragged){
+    dragged.dragging=false
+    dragged=null
+  }
+  sliceStart=null
+  if(stage=="slice" && slices.length>=slicesNeeded){
+    calculateScore()
+    spawnConfetti()
+    stage="end"
+  }
+}
+
+function createTray(){
+  let keys=Object.keys(toppingImgs)
+  for(let i=0;i<keys.length;i++){
+    tray.push(new TrayItem(keys[i],120+i*120,100))
+  }
+}
+
+function drawTray(){
+  for(let t of tray) t.show()
+}
+
+function recipeText(){
+  let t="Add: "
+  for(let k in recipe) if(k!="id") t+=recipe[k]+" "+k+" "
+  return t
+}
+
+function startCheese(){
+  cheeseStart=millis()
+  for(let i=0;i<80;i++) cheeseParticles.push(new CheeseParticle())
+  stage="cheeseAnim"
+}
+
+function calculateScore(){ stars=floor(random(3,6)) }
+
+function drawStars(x,y,n){
+  for(let i=0;i<n;i++){
+    push()
+    translate(x+i*40,y)
+    fill(255,220,0)
+    stroke(200,160,0)
+    star(0,0,10,20,5)
+    pop()
+  }
+}
+
+function star(x,y,r1,r2,n){
+  beginShape()
+  for(let i=0;i<n*2;i++){
+    let a=i*PI/n
+    let r=i%2?r1:r2
+    vertex(cos(a)*r,sin(a)*r)
+  }
+  endShape(CLOSE)
+}
+
+class Topping{
+  constructor(type,x,y){ this.type=type; this.x=x; this.y=y; this.size=55; this.dragging=false }
+  update(){ if(this.dragging){ this.x=mouseX; this.y=mouseY } }
+  show(){ image(toppingImgs[this.type],this.x,this.y,this.size,this.size) }
+  showFade(alpha){ tint(255,alpha); image(toppingImgs[this.type],this.x,this.y,this.size,this.size); noTint() }
+}
+
+class TrayItem{
+  constructor(type,x,y){ this.type=type; this.x=x; this.y=y; this.size=60 }
+  hover(){ return dist(mouseX,mouseY,this.x,this.y)<this.size/2 }
+  show(){ image(toppingImgs[this.type],this.x,this.y,this.size,this.size) }
+}
+
+class CheeseParticle{ constructor(){ this.x=random(pizzaX-120,pizzaX+120); this.y=pizzaY-150; this.v=random(1,3) }
+  update(){ this.y+=this.v }
+  show(){ fill(255,240,120); noStroke(); ellipse(this.x,this.y,4) }
+}
+
+class Steam{ constructor(){ this.x=random(pizzaX-60,pizzaX+60); this.y=pizzaY-80; this.v=random(.4,1) }
+  update(){ this.y-=this.v }
+  show(){ stroke(200,200,200,120); line(this.x,this.y,this.x,this.y-20) }
+}
+
+class Confetti{ constructor(){ this.x=random(width); this.y=random(-100,0); this.v=random(2,5) }
+  update(){ this.y+=this.v }
+  show(){ rect(this.x,this.y,6,6) }
+}
+
+function spawnConfetti(){ for(let i=0;i<150;i++) confetti.push(new Confetti()) }
+
+class Button{
+  constructor(x,y,label,color){ this.x=x; this.y=y; this.w=120; this.h=45; this.label=label; this.color=color }
+  hover(){ return mouseX>this.x && mouseX<this.x+this.w && mouseY>this.y && mouseY<this.y+this.h }
+  show(){ if(this.hover()) fill(255,255,255,70); else fill(220); rect(this.x,this.y,this.w,this.h,10); fill(0); textAlign(CENTER,CENTER); text(this.label,this.x+this.w/2,this.y+this.h/2) }
+}
