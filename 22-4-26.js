@@ -101,7 +101,7 @@ let allCorrect=false
 let trayAlpha=255
 
 function preload(){
-  gameFont=loadFont("Sauce Tomato Font/Sauce Tomato.otf")
+  gameFont="Space Grotesk"
   flameImg=loadImage("PNG Pizza Express Photos/Flame.png")
   cheeseParticleImg=loadImage("PNG Pizza Express Photos/Cheese.png")
   bgImg=loadImage("PNG Pizza Express Photos/Background.jpg")
