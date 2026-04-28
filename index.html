@@ -11,25 +11,21 @@
         body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: grid;
+            place-items: center;
             min-height: 100vh;
             background-color: #f0f0f0;
             font-family: 'Space Grotesk', Arial, sans-serif;
             overflow: hidden;
         }
         #p5-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
         }
         #p5-container canvas {
             display: block;
-            transform-origin: center center;
             touch-action: none;
         }
     </style>

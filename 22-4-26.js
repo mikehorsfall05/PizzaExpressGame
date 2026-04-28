@@ -179,6 +179,24 @@ function setup(){
   for(let key in cookedImgs){
     cookedBounds[key]=getOpaqueBounds(cookedImgs[key])
   }
+
+  fitCanvasToViewport()
+}
+
+function fitCanvasToViewport(){
+  let canvas=document.querySelector("#p5-container canvas")
+  if(!canvas) return
+
+  let viewportWidth=window.innerWidth
+  let viewportHeight=window.innerHeight
+  let scale=min(viewportWidth/1000,viewportHeight/700,1)
+
+  canvas.style.width=(1000*scale)+"px"
+  canvas.style.height=(700*scale)+"px"
+}
+
+function windowResized(){
+  fitCanvasToViewport()
 }
 
 function draw(){
