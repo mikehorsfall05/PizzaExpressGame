@@ -100,6 +100,13 @@ let cheeseBrushRadius=48
 let allCorrect=false
 let trayAlpha=255
 
+const DESIGN_CANVAS_WIDTH=1000
+const DESIGN_CANVAS_HEIGHT=700
+
+function ui(value){
+  return value*min(width/DESIGN_CANVAS_WIDTH,height/DESIGN_CANVAS_HEIGHT)
+}
+
 function preload(){
   gameFont=loadFont("Sauce Tomato Font/Sauce Tomato.otf")
   flameImg=loadImage("PNG Pizza Express Photos/Flame.png")
@@ -144,13 +151,18 @@ function preload(){
 }
 
 function setup(){
-  let canvas=createCanvas(1000,700)
+  let canvas=createCanvas(1920,1080)
   canvas.parent("p5-container")
+  baseSize=ui(300)
+  doughGrowth=ui(90)
+  maxSize=baseSize+doughGrowth
+  sliceCutWidth=ui(9)
+  cheeseBrushRadius=ui(48)
   textFont(gameFont)
   sliceLayer=createGraphics(width,height)
   initCheeseParticleSprite()
   pizzaX=width/2
-  pizzaY=height/2+25
+  pizzaY=height/2+ui(25)
 
   recipe=random(RECIPES)
   usedCounts={};
@@ -160,12 +172,12 @@ function setup(){
   slicesNeeded=random([4,6,8])
   linesNeeded=slicesNeeded/2
 
-  sauceBtn={x:width-140,y:height/2,w:190,h:190}
-  bakeBtn=new Button(width-150,height-80,"Bake")
-  finishBtn=new Button(width-210,height/2-70,"✔")
-  finishBtn.w=150
-  finishBtn.h=150
-  replayBtn=new Button(width/2-70,height/2+140,"Replay")
+  sauceBtn={x:width-ui(140),y:height/2,w:ui(190),h:ui(190)}
+  bakeBtn=new Button(width-ui(150),height-ui(80),"Bake")
+  finishBtn=new Button(width-ui(210),height/2-ui(70),"✔")
+  finishBtn.w=ui(150)
+  finishBtn.h=ui(150)
+  replayBtn=new Button(width/2-ui(70),height/2+ui(140),"Replay")
   
   createTray()
 
@@ -190,10 +202,10 @@ function fitCanvasToViewport(){
 
   let viewportWidth=window.innerWidth
   let viewportHeight=window.innerHeight
-  let scale=min(viewportWidth/1000,viewportHeight/700,1)
+  let scale=min(viewportWidth/1920,viewportHeight/1080,1)
 
-  canvas.style.width=(1000*scale)+"px"
-  canvas.style.height=(700*scale)+"px"
+  canvas.style.width=(1920*scale)+"px"
+  canvas.style.height=(1080*scale)+"px"
 }
 
 function windowResized(){
@@ -236,10 +248,10 @@ function draw(){
 
 function drawWelcome(){
   textAlign(CENTER,CENTER)
-  textSize(38)
+  textSize(ui(38))
   textStyle(BOLD)
   stroke(255)
-  strokeWeight(6)
+  strokeWeight(ui(6))
   fill(0)
   text("Do YOU think you've got what it takes\nto become a pizzaiolo pro?",width/2,height/2-25)
   noStroke()
@@ -304,10 +316,10 @@ function drawWelcomeFaded(alpha){
   }
   push()
   textAlign(CENTER,CENTER)
-  textSize(38)
+  textSize(ui(38))
   textStyle(BOLD)
   stroke(255,alpha)
-  strokeWeight(6)
+  strokeWeight(ui(6))
   fill(0,alpha)
   text("Do YOU think you've got what it takes\nto become a pizzaiolo pro?",width/2,height/2-25)
   noStroke()
@@ -322,10 +334,10 @@ function drawDoughTransitionFrame(alpha){
   drawPizzaBase(doughImg,doughBounds,pizzaW,pizzaH,alpha)
 
   textAlign(CENTER)
-  textSize(24)
+  textSize(ui(24))
   textStyle(NORMAL)
   stroke(255,alpha)
-  strokeWeight(4)
+  strokeWeight(ui(4))
   fill(0,alpha)
   text("Press when the dough is at its biggest",width/2,60)
   noStroke()
@@ -333,10 +345,10 @@ function drawDoughTransitionFrame(alpha){
 
 function drawDough(){
   textAlign(CENTER)
-  textSize(24)
+  textSize(ui(24))
   textStyle(NORMAL)
   stroke(255)
-  strokeWeight(4)
+  strokeWeight(ui(4))
   fill(0)
   text("Press when the dough is at its biggest",width/2,60)
   noStroke()
@@ -475,15 +487,15 @@ function drawCheese(){
 
   textAlign(CENTER,TOP)
   textStyle(BOLD)
-  textSize(24)
+  textSize(ui(24))
   stroke(255)
-  strokeWeight(5)
+  strokeWeight(ui(5))
   fill(0)
-  text("Don't forget to add the cheese!",width/2,22)
+  text("Don't forget to add the cheese!",width/2,ui(22))
   textStyle(NORMAL)
-  textSize(14)
-  strokeWeight(3)
-  text("(Pro tip: Click and drag the mouse across the pizza to add the cheese)",width/2,56)
+  textSize(ui(14))
+  strokeWeight(ui(3))
+  text("(Pro tip: Click and drag the mouse across the pizza to add the cheese)",width/2,ui(56))
   noStroke()
   
   if(cheeseProgress>=1) stage="readyBake"
@@ -618,16 +630,16 @@ function drawEnd(){
   let messageStart=starsStart+starsTotalMs
 
   let centerY=height/2
-  let timerY=centerY-150
-  let scoreY=centerY-65
-  let starsY=centerY+10
-  let messageY=centerY+90
+  let timerY=centerY-ui(150)
+  let scoreY=centerY-ui(65)
+  let starsY=centerY+ui(10)
+  let messageY=centerY+ui(90)
 
   textFont(gameFont);
 
   drawStampedText("Time: "+stopwatchText(),width/2,timerY,30,elapsed,timerStart,END_BOUNCE_MS)
   drawStampedText("Your Score",width/2,scoreY,24,elapsed,scoreStart,END_BOUNCE_MS)
-  drawStampedStars(width/2-90,starsY,overallStars,overallCapStars,elapsed,starsStart,END_BOUNCE_MS,END_STAR_STAGGER_MS)
+  drawStampedStars(width/2-ui(90),starsY,overallStars,overallCapStars,elapsed,starsStart,END_BOUNCE_MS,END_STAR_STAGGER_MS)
 
   let starsForMessage=constrain(round(overallStars),1,5)
   let endMessage=""
@@ -643,7 +655,7 @@ function drawEnd(){
     endMessage="Is that really the best you can do?\nHopefully some dough balls will cheer you up?"
   }
 
-  drawStampedText(endMessage,width/2,messageY,16,elapsed,messageStart,END_BOUNCE_MS,true,28)
+  drawStampedText(endMessage,width/2,messageY,16,elapsed,messageStart,END_BOUNCE_MS,true,ui(28))
 
   noStroke()
   for(let c of confetti){
@@ -652,7 +664,7 @@ function drawEnd(){
   }
 
   replayBtn.x=width/2-replayBtn.w/2
-  replayBtn.y=centerY+155
+  replayBtn.y=centerY+ui(155)
   replayBtn.show()
 }
 
@@ -916,7 +928,7 @@ function paintCheeseAt(x,y){
     ctx.restore()
   }
 
-  for(let i=0;i<2;i++) cheeseParticles.push(new CheeseParticle(x,y))
+  for(let i=0;i<1;i++) cheeseParticles.push(new CheeseParticle(x,y))
 
   let r2=cheeseBrushRadius*cheeseBrushRadius
   for(let s of cheeseSamples){
@@ -1048,19 +1060,19 @@ function drawStopwatch(){
   push()
   textAlign(CENTER,BOTTOM)
   textStyle(BOLD)
-  textSize(26)
+  textSize(ui(26))
   stroke(255)
-  strokeWeight(4)
+  strokeWeight(ui(4))
   fill(0)
-  text(stopwatchText(),width/2,height-14)
+  text(stopwatchText(),width/2,height-ui(14))
   noStroke()
   pop()
 }
 
 function drawFlameBtn(){
-  let flameX=width-130
+  let flameX=width-ui(130)
   let flameY=height/2
-  let flameSize=160
+  let flameSize=ui(160)
   push()
   if(flameBtnHover()) tint(255,220)
   image(flameImg,flameX,flameY,flameSize,flameSize)
@@ -1115,11 +1127,11 @@ function drawStampedText(message,x,y,size,elapsed,startMs,durationMs,isCentered,
   scale(s)
   textAlign(CENTER,isCentered?CENTER:BASELINE)
   textStyle(NORMAL)
-  textSize(size)
+  textSize(ui(size))
   stroke(255,a)
-  strokeWeight(4)
+  strokeWeight(ui(4))
   fill(0,a)
-  if(leading!==undefined) textLeading(leading)
+  if(leading!==undefined) textLeading(ui(leading))
   text(message,0,0)
   pop()
 }
@@ -1134,7 +1146,7 @@ function drawStampedStars(x,y,filled,total,elapsed,startMs,durationMs,staggerMs)
     let a=revealAlphaFromProgress(p)
 
     push()
-    translate(x+i*40,y)
+    translate(x+i*ui(40),y)
     scale(s)
     if(i<roundedFilled){
       fill(255,220,0,a)
@@ -1143,7 +1155,7 @@ function drawStampedStars(x,y,filled,total,elapsed,startMs,durationMs,staggerMs)
       fill(235,235,235,a)
       stroke(170,170,170,a)
     }
-    star(0,0,10,20,5)
+    star(0,0,ui(10),ui(20),5)
     pop()
   }
 }
@@ -1151,20 +1163,20 @@ function drawStampedStars(x,y,filled,total,elapsed,startMs,durationMs,staggerMs)
 function drawFinishTick(){
   let cx=finishBtn.x+finishBtn.w/2
   let cy=finishBtn.y+finishBtn.h/2
-  let tickSize=130
+  let tickSize=ui(130)
   push()
   translate(cx,cy)
   if(finishBtn.hover()){
     noStroke()
     fill(255,255,255,120)
-    ellipse(0,0,tickSize+30,tickSize+30)
+    ellipse(0,0,tickSize+ui(30),tickSize+ui(30))
   }
   stroke(34,160,70)
-  strokeWeight(16)
+  strokeWeight(ui(16))
   strokeCap(ROUND)
   noFill()
-  line(-32,8,-10,30)
-  line(-10,30,38,-28)
+  line(-ui(32),ui(8),-ui(10),ui(30))
+  line(-ui(10),ui(30),ui(38),-ui(28))
   pop()
 }
 
@@ -1217,30 +1229,30 @@ function initCheeseParticleSprite(){
 }
 
 function startBtnHover(){
-  let btnW=220
-  let btnH=68
+  let btnW=ui(220)
+  let btnH=ui(68)
   let btnX=width/2
-  let btnY=height/2+90
+  let btnY=height/2+ui(90)
   return mouseX>btnX-btnW/2 && mouseX<btnX+btnW/2 &&
          mouseY>btnY-btnH/2 && mouseY<btnY+btnH/2;
 }
 
 function drawStartButton(alpha){
-  let btnW=220
-  let btnH=68
+  let btnW=ui(220)
+  let btnH=ui(68)
   let btnX=width/2
-  let btnY=height/2+90
+  let btnY=height/2+ui(90)
   push()
   rectMode(CENTER)
   if(startBtnHover()) fill(26,170,71,alpha); else fill(30,191,84,alpha)
   noStroke()
-  rect(btnX,btnY,btnW,btnH,12)
+  rect(btnX,btnY,btnW,btnH,ui(12))
   fill(255,alpha)
   textAlign(CENTER,CENTER)
   textStyle(BOLD)
-  textSize(26)
+  textSize(ui(26))
   stroke(0,alpha)
-  strokeWeight(3)
+  strokeWeight(ui(3))
   text("TRY NOW!",btnX,btnY-8)
   noStroke()
   pop()
