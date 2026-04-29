@@ -151,7 +151,7 @@ function preload(){
 }
 
 function setup(){
-  let canvas=createCanvas(1920,1080)
+  let canvas=createCanvas(DESIGN_CANVAS_WIDTH,DESIGN_CANVAS_HEIGHT)
   canvas.parent("p5-container")
   baseSize=ui(300)
   doughGrowth=ui(90)
@@ -202,10 +202,10 @@ function fitCanvasToViewport(){
 
   let viewportWidth=window.innerWidth
   let viewportHeight=window.innerHeight
-  let scale=min(viewportWidth/1920,viewportHeight/1080,1)
+  let scale=min(viewportWidth/DESIGN_CANVAS_WIDTH,viewportHeight/DESIGN_CANVAS_HEIGHT,1)
 
-  canvas.style.width=(1920*scale)+"px"
-  canvas.style.height=(1080*scale)+"px"
+  canvas.style.width=(DESIGN_CANVAS_WIDTH*scale)+"px"
+  canvas.style.height=(DESIGN_CANVAS_HEIGHT*scale)+"px"
 }
 
 function windowResized(){
